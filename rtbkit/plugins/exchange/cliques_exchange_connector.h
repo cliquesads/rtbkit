@@ -29,9 +29,9 @@ struct CliquesExchangeConnector : public OpenRTBExchangeConnector {
     }
 
     struct CampaignInfo {
-        static constexpr uint64_t MaxSeatValue = 16777215;
+//        static constexpr uint64_t MaxSeatValue = 16777215;
         ///< ID of the Cliques exchange seat if DSP is used by multiple agencies
-        uint64_t seat; // [0, 16777215]
+        std::string seat; // [0, 16777215]
     };
                                
     ExchangeCompatibility
