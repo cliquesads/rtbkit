@@ -107,7 +107,7 @@ CliquesExchangeConnector::getCampaignCompatibility(
 //        return result;
 //    }
 
-    std::string value = seat.string();
+    std::string value = seat.asString();
 //    uint64_t value = seat.asUInt();
 //    if (value > CampaignInfo::MaxSeatValue) {
 //        result.setIncompatible(
