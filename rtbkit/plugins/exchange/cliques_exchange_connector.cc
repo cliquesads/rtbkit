@@ -99,7 +99,7 @@ CliquesExchangeConnector::getCampaignCompatibility(
         return result;
     }
 
-    const auto& seat = provConf["seat"];
+    std:string seat = provConf["seat"];
 //    if (!seat.isIntegral()) {
 //        result.setIncompatible(
 //                ML::format("providerConfig.%s.seat is not merdiumint or unsigned", name),
@@ -107,7 +107,7 @@ CliquesExchangeConnector::getCampaignCompatibility(
 //        return result;
 //    }
 
-      std::string value = seat;
+    std::string value = seat
 //    uint64_t value = seat.asUInt();
 //    if (value > CampaignInfo::MaxSeatValue) {
 //        result.setIncompatible(
