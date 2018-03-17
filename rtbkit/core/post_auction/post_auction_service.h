@@ -21,6 +21,7 @@
 #include "soa/service/rest_request_router.h"
 #include "rtbkit/common/analytics_publisher.h"
 #include "rtbkit/core/banker/local_banker.h"
+#include "rtbkit/core/banker/slave_banker.h"
 
 namespace RTBKIT {
 

@@ -552,6 +552,16 @@ doMatchedCampaignEvent(std::shared_ptr<MatchedCampaignEvent> event)
     event->publish(logger);
     event->publish(analytics);
 
+    if (event->label == "CLICK") {
+        auto winPriceValue = event->win.get("winPrice", "");
+        if (winPriceValue.isArray()) {
+            int amount = winPriceValue[0].asInt();
+            CurrencyCode currency = Amount::parseCurrency(winPriceValue[1].asString());
+            auto slaveBanker = std::static_pointer_cast<SlaveBanker>(banker);
+            slaveBanker->commitEvent(event->account, RTBKIT::Amount(currency, amount));
+        }
+    }
+
     // For the moment, send the message to all of the agents that are
     // bidding on this account
     //
