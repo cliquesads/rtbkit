@@ -11,6 +11,9 @@
 
 #include <iostream>
 
+#include "rtbkit/core/banker/slave_banker.h"
+#include "ycx_debug.h"
+
 using namespace std;
 using namespace Datacratic;
 using namespace ML;
@@ -530,6 +533,7 @@ doBidResult(
     const Auction::Response & response = submission.bid;
 
     const AccountKey & account = response.account;
+
     if (account.size() == 0)
         THROW(error) << "invalid account key";
 
@@ -573,7 +577,21 @@ doBidResult(
         guard.clear();
 
         auto transId = makeBidId(auctionId, adSpotId, agent);
-        banker->winBid(account, transId, price, LineItems());
+
+        /**
+         * ------------ For CPM, call banker->winBid with winPrice as amountPaid,
+         * ------------ For CPC, call banker->winBid with 0 as amountPaid
+         * The invoke chain for banker->winBid:
+         * - banker.h->winBid
+         * - banker.h->commitBid
+         * - slave_banker.h->commitBid
+         * - account.h->ShadowAccounts->commitBid
+         * - account.h->ShadowAccount(ShadowAccounts and ShadowAccount are 2 different structs)->commitBid
+         * - account.h->ShadowAccount->commitDetachedBid
+         */
+
+        // banker->winBid(account, transId, price, LineItems());
+        banker->winBid(account, transId, Amount(price.currencyCode, 0), LineItems());
 
         auto winLatency = Date::now().secondsSince(submission.bidRequest->timestamp);
         recordOutcome(winLatency * 1000.0, "winLatencyMs");
