@@ -12,7 +12,6 @@
 #include <iostream>
 
 #include "rtbkit/core/banker/slave_banker.h"
-#include "ycx_debug.h"
 
 using namespace std;
 using namespace Datacratic;
