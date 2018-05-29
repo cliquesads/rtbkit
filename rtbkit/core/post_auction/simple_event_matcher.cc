@@ -589,8 +589,15 @@ doBidResult(
          * - account.h->ShadowAccount->commitDetachedBid
          */
 
-        // banker->winBid(account, transId, price, LineItems());
-        banker->winBid(account, transId, Amount(price.currencyCode, 0), LineItems());
+        auto bidRequestJSON = submission.bidRequest->toJson();
+        std::string bidOn = bidRequestJSON["unparseable"]["meta"]["bidOn"].asString();
+
+        if (bidOn == "CPC") {
+            banker->winBid(account, transId, Amount(price.currencyCode, 0), LineItems());
+        } else {
+            banker->winBid(account, transId, price, LineItems());
+        }
+
 
         auto winLatency = Date::now().secondsSince(submission.bidRequest->timestamp);
         recordOutcome(winLatency * 1000.0, "winLatencyMs");

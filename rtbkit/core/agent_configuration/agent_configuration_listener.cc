@@ -47,6 +47,26 @@ forEachAccountAgent(const AccountKey & account,
 
 AgentConfigEntry
 AgentConfigurationListener::
+getAgentEntryByAccount(const AccountKey & account) const
+{
+    GcLock::SharedGuard guard(allAgentsGc);
+    const AllAgentConfig *ac = allAgents;
+    if (!ac) return AgentConfigEntry();
+
+    auto it = ac->accountIndex.find(account);
+    if (it == ac->accountIndex.end()) {
+        return AgentConfigEntry();
+    }
+
+    for (auto jt = it->second.begin(), jend = it->second.end(); jt != jend; ++jt) {
+        auto agentConfigEntry = ac->at(*jt);
+        return agentConfigEntry;
+    }
+    return AgentConfigEntry();
+}
+
+AgentConfigEntry
+AgentConfigurationListener::
 getAgentEntry(const std::string & agent) const
 {
     GcLock::SharedGuard guard(allAgentsGc);

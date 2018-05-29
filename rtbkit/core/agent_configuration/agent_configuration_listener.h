@@ -108,6 +108,10 @@ struct AgentConfigurationListener: public MessageLoop {
     void forEachAccountAgent(const AccountKey & account,
                              const OnAgentFn & onAgent) const;
 
+
+    AgentConfigEntry getAgentEntryByAccount(const AccountKey & account) const;
+
+
     /** Find the information entry for the given agent.  All elements are
         guaranteed to be valid until the object is destroyed.
     */

@@ -552,13 +552,19 @@ doMatchedCampaignEvent(std::shared_ptr<MatchedCampaignEvent> event)
     event->publish(logger);
     event->publish(analytics);
 
+    // CPC in post_auction_service.cc->doMatchedCampaignEvent
     if (event->label == "CLICK") {
-        auto winPriceValue = event->win.get("winPrice", "");
-        if (winPriceValue.isArray()) {
-            int amount = winPriceValue[0].asInt();
-            CurrencyCode currency = Amount::parseCurrency(winPriceValue[1].asString());
-            auto slaveBanker = std::static_pointer_cast<SlaveBanker>(banker);
-            slaveBanker->commitEvent(event->account, RTBKIT::Amount(currency, amount));
+        auto agentConfigEntry = configListener.getAgentEntryByAccount(event->account);
+        auto agentConfigJson = agentConfigEntry.config->toJson();
+        std::string bidOn = agentConfigJson["providerConfig"]["cliques"]["bidOn"].asString();
+        if (bidOn == "CPC") {
+            auto winPriceValue = event->win.get("winPrice", "");
+            if (winPriceValue.isArray()) {
+                int amount = winPriceValue[0].asInt();
+                CurrencyCode currency = Amount::parseCurrency(winPriceValue[1].asString());
+                auto slaveBanker = std::static_pointer_cast<SlaveBanker>(banker);
+                slaveBanker->commitEvent(event->account, RTBKIT::Amount(currency, amount));
+            }
         }
     }
 
