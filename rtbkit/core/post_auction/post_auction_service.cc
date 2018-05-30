@@ -556,8 +556,8 @@ doMatchedCampaignEvent(std::shared_ptr<MatchedCampaignEvent> event)
     if (event->label == "CLICK") {
         auto agentConfigEntry = configListener.getAgentEntryByAccount(event->account);
         auto agentConfigJson = agentConfigEntry.config->toJson();
-        std::string bidOn = agentConfigJson["providerConfig"]["cliques"]["bidOn"].asString();
-        if (bidOn == "CPC") {
+        std::string pricing = agentConfigJson["providerConfig"]["cliques"]["pricing"].asString();
+        if (pricing == "CPC") {
             auto winPriceValue = event->win.get("winPrice", "");
             if (winPriceValue.isArray()) {
                 int amount = winPriceValue[0].asInt();

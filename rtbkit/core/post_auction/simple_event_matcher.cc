@@ -590,9 +590,8 @@ doBidResult(
          */
 
         auto bidRequestJSON = submission.bidRequest->toJson();
-        std::string bidOn = bidRequestJSON["unparseable"]["meta"]["bidOn"].asString();
-
-        if (bidOn == "CPC") {
+        std::string pricing = bidRequestJSON["unparseable"]["meta"]["pricing"].asString();
+        if (pricing == "CPC") {
             banker->winBid(account, transId, Amount(price.currencyCode, 0), LineItems());
         } else {
             banker->winBid(account, transId, price, LineItems());
