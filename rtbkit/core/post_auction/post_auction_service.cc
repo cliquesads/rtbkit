@@ -563,7 +563,12 @@ doMatchedCampaignEvent(std::shared_ptr<MatchedCampaignEvent> event)
                 int amount = winPriceValue[0].asInt();
                 CurrencyCode currency = Amount::parseCurrency(winPriceValue[1].asString());
                 auto slaveBanker = std::static_pointer_cast<SlaveBanker>(banker);
-                slaveBanker->commitEvent(event->account, RTBKIT::Amount(currency, amount));
+                /**
+                 * slave_banker.h->commitEvent
+                 * account.h->ShadowAccounts->commitEvent
+                 * account.h->ShadowAccount->commitEvent
+                 */
+                slaveBanker->commitEvent(event->account, RTBKIT::Amount(currency, amount * 1000));
             }
         }
     }
