@@ -479,7 +479,7 @@ struct ShadowAccount {
             
             CurrencyPool credit = netBudget + commitmentsRetired;
             CurrencyPool debit = commitmentsMade + spent + balance;
-            
+
             ExcAssertEqual(credit, debit);
         } catch (...) {
             using namespace std;
@@ -563,6 +563,17 @@ struct ShadowAccount {
         checkInvariants();
     }
 
+    void commitCPC(const Amount & amountToCommit, const std::string & item)
+    {
+        auto amountAuthorized = detachBid(item);
+        checkInvariants();
+        balance += amountAuthorized;
+        commitmentsRetired += amountAuthorized;
+        balance -= amountToCommit;
+        spent += amountToCommit;
+        checkInvariants();
+    }
+
     /// Commit a specific currency (amountToCommit)
     void commitEvent(const Amount & amountToCommit)
     {
@@ -583,7 +594,7 @@ struct ShadowAccount {
 
         if (!balance.hasAvailable(amount))
             return false;  // no budget balance
-
+        
         attachBid(item, amount);
 
         balance -= amount;
@@ -620,7 +631,7 @@ struct ShadowAccount {
         checkInvariants();
 
         detachedBids++;
-        
+
         return amountAuthorized;
     }
 
@@ -1550,6 +1561,13 @@ struct ShadowAccounts {
         Guard guard(lock);
         return getAccountImpl(accountKey)
             .commitDetachedBid(amountAuthorized, amountPaid, lineItems);
+    }
+
+    void commitCPC(const AccountKey & accountKey, const Amount &
+    amountToCommit, const std::string & item)
+    {
+        Guard guard(lock);
+        return getAccountImpl(accountKey).commitCPC(amountToCommit, item);
     }
 
     /// Commit a specific currency (amountToCommit)

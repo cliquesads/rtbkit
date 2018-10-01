@@ -175,6 +175,12 @@ struct SlaveBanker : public Banker, public MessageLoop {
                                           lineItems);
     }
 
+    void commitCPC(const AccountKey & account, const Amount &
+    amountToCommit, const std::string & item)
+    {
+        accounts.commitCPC(account, amountToCommit, item);
+    }
+
     /**
      * Commit a given Amount to the given accounts
      * This function is built to commit special

@@ -541,6 +541,11 @@ doMatchedWinLoss(std::shared_ptr<MatchedWinLoss> event)
         });
 }
 
+std::string makeBidId(Id auctionId, Id spotId, const std::string & agent)
+{
+    return auctionId.toString() + "-" + spotId.toString() + "-" + agent;
+}
+
 void
 PostAuctionService::
 doMatchedCampaignEvent(std::shared_ptr<MatchedCampaignEvent> event)
@@ -564,11 +569,12 @@ doMatchedCampaignEvent(std::shared_ptr<MatchedCampaignEvent> event)
                 CurrencyCode currency = Amount::parseCurrency(winPriceValue[1].asString());
                 auto slaveBanker = std::static_pointer_cast<SlaveBanker>(banker);
                 /**
-                 * slave_banker.h->commitEvent
-                 * account.h->ShadowAccounts->commitEvent
-                 * account.h->ShadowAccount->commitEvent
+                 * slave_banker.h->commitCPC
+                 * account.h->ShadowAccounts->commitCPC
+                 * account.h->ShadowAccount->commitCPC
                  */
-                slaveBanker->commitEvent(event->account, RTBKIT::Amount(currency, amount * 1000));
+                auto transId = makeBidId(event->auctionId, event->impId, event->bid["agent"].asString());
+                slaveBanker->commitCPC(event->account, RTBKIT::Amount(currency, amount * 1000), transId);
             }
         }
     }
